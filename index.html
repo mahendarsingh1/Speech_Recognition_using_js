@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <style>
+        html {
+            font-size: 10px;
+        }
+
+        body {
+            background: #ffc600;
+            font-family: 'helvetica neue';
+            font-weight: 200;
+            font-size: 20px;
+        }
+
+        .words{
+            background-size: 100% 3rem;
+            position: relative;
+            margin: 50px auto;
+            width: 500px;
+            background: white;
+            border: 5px;
+            background: -webkit-gradient(linear, 0 0, 0 100%, from(#d9eaf3), color-stop(4%, #fff)) 0 4px;
+            box-shadow: 10px 10px 0 rgba(0,0,0,0.1);
+            padding: 1rem 2rem 1rem 5rem;
+            line-height: 3rem;
+        }
+
+        .words:before{
+            content: '';
+            position: absolute;
+            width: 4px;
+            left: 30px;
+            top: 0;
+            bottom: 0;
+            border: 1px solid;
+            border-color: transparent #efe4e4;
+        }
+
+        p {
+            margin: 0 0 3rem;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="words" contenteditable=""></div>
+
+    <script>
+
+        const words=document.querySelector('.words');
+
+        window.SpeechRecognition=window.webkitSpeechRecognition || window.SpeechRecognition;
+
+        const recognition = new SpeechRecognition();
+
+        recognition.interimResults=true;  // means return the results or not interim->(not yet final)
+
+        // recognition.lang='kn-IN';
+        recognition.lang='en-US';
+
+        let p=document.createElement('p');
+        words.appendChild(p);
+
+        recognition.start();
+
+        recognition.addEventListener('result',e =>{
+        
+            let transcripts=Array.from(e.results)
+                            .map(result=>result[0])
+                            .map(result=>{
+                                // console.log(result.transcript);
+                                return result.transcript;
+                            })
+                            .join('');
+
+            // console.log(e.results);
+            
+            // transcripts=transcripts.replace(/hi|hello/gi,'💩');
+
+            p.textContent=transcripts;
+            if(e.results[0].isFinal){
+                p=document.createElement('p');
+                words.appendChild(p);
+            }
+        });
+
+        recognition.addEventListener('end',recognition.start);
+
+    </script>
+</body>
+
+</html>
